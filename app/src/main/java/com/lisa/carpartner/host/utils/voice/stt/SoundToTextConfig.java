@@ -1,5 +1,7 @@
 package com.lisa.carpartner.host.utils.voice.stt;
 
+import com.iflytek.cloud.SpeechConstant;
+
 public class SoundToTextConfig {
     //设置语法ID和 SUBJECT 为空，以免因之前有语法调用而设置了此参数；或直接清空所有参数，具体可参考 DEMO 的示例。
     public String CLOUD_GRAMMAR = null;
@@ -9,7 +11,7 @@ public class SoundToTextConfig {
     public String RESULT_TYPE = "plain";
 
     //此处engineType为“cloud”
-    public String ENGINE_TYPE = "cloud";
+    public String ENGINE_TYPE = SpeechConstant.TYPE_CLOUD;
 
     //设置语音输入语言，zh_cn为简体中文
     public String LANGUAGE = "zh_cn";
