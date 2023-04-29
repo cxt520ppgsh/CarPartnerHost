@@ -22,6 +22,7 @@ public class PermissionUtils {
             Manifest.permission.CHANGE_NETWORK_STATE,
             Manifest.permission.READ_CONTACTS,
 //            Manifest.permission.WRITE_SETTINGS,
+            Manifest.permission.MODIFY_AUDIO_SETTINGS,
     };
 
     public static void requestPermissionIfNeed(ComponentActivity activity) {
