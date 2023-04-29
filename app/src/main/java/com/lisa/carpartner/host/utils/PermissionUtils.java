@@ -13,11 +13,18 @@ import java.util.Map;
 public class PermissionUtils {
     private static final String[] REQUEST_PERMISSION = {
             Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA,
-            Manifest.permission.ACCESS_FINE_LOCATION};
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.CHANGE_NETWORK_STATE,
+            Manifest.permission.READ_CONTACTS,
+//            Manifest.permission.WRITE_SETTINGS,
+    };
 
-    public static void requestPermissionIfNeed(ComponentActivity activity, Runnable allGrantedCallBack) {
+    public static void requestPermissionIfNeed(ComponentActivity activity) {
         ActivityResultLauncher<String[]> requestPermissionLauncher = activity.registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
             @Override
             public void onActivityResult(Map<String, Boolean> result) {
@@ -29,8 +36,9 @@ public class PermissionUtils {
                     }
                 }
                 if (allGranted) {
-                    if (allGrantedCallBack != null) allGrantedCallBack.run();
+
                 } else {
+                    activity.finish();
                     Toast.makeText(activity, "需要所有权限授权方可使用", Toast.LENGTH_SHORT).show();
                 }
             }

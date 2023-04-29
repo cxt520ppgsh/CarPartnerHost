@@ -12,16 +12,22 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/startOfflineWake"
+            android:id="@+id/startOfflineWakeBt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="开启离线语音识别"></Button>
 
         <Button
-            android:id="@+id/startStt"
+            android:id="@+id/startOnlineSttBt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="开始语音识别"></Button>
+
+        <TextView
+            android:id="@+id/onlineSttTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"></TextView>
     </LinearLayout>
 
 
