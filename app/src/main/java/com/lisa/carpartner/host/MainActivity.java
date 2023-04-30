@@ -16,6 +16,7 @@ import com.iflytek.cloud.SpeechRecognizer;
 import com.lisa.carpartner.host.utils.PermissionUtils;
 import com.lisa.carpartner.host.utils.voice.stt.STSUtils;
 import com.lisa.carpartner.host.utils.voice.tts.TTSUtils;
+import com.lisa.carpartner.host.utils.voice.wake.WakeUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,7 +43,17 @@ public class MainActivity extends AppCompatActivity {
         startOfflineWakeBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                WakeUtils.startWakeUp(new WakeUtils.OnWakeupCallback() {
+                    @Override
+                    public void onWakeUp() {
 
+                    }
+
+                    @Override
+                    public void onError(SpeechError speechError) {
+
+                    }
+                });
             }
         });
         startOnlineSttBt.setOnClickListener(v -> STSUtils.startOnlineSoundToText(new STSUtils.OnlineSoundToTextCallback() {

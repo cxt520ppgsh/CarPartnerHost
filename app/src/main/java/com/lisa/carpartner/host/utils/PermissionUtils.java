@@ -8,9 +8,13 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
+import com.lisa.carpartner.host.utils.voice.LogUtils;
+
 import java.util.Map;
 
 public class PermissionUtils {
+    private static final String TAG = PermissionUtils.class.getSimpleName();
+
     private static final String[] REQUEST_PERMISSION = {
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.READ_PHONE_STATE,
@@ -32,6 +36,8 @@ public class PermissionUtils {
                 boolean allGranted = true;
                 for (Map.Entry<String, Boolean> entry : result.entrySet()) {
                     if (!entry.getValue()) {
+                        Toast.makeText(activity, "permission not granted " + entry.getKey(), Toast.LENGTH_SHORT).show();
+                        LogUtils.d(TAG, "permission not granted " + entry.getKey());
                         allGranted = false;
                         break;
                     }
@@ -39,7 +45,7 @@ public class PermissionUtils {
                 if (allGranted) {
 
                 } else {
-                    activity.finish();
+//                    activity.finish();
                     Toast.makeText(activity, "需要所有权限授权方可使用", Toast.LENGTH_SHORT).show();
                 }
             }
