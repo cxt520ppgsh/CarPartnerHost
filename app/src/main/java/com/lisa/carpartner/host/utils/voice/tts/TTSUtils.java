@@ -3,9 +3,7 @@ package com.lisa.carpartner.host.utils.voice.tts;
 import android.speech.tts.TextToSpeech;
 
 import com.lisa.carpartner.host.utils.AppUtils;
-import com.lisa.carpartner.host.utils.voice.LogUtils;
-
-import java.util.Locale;
+import com.lisa.carpartner.host.utils.LogUtils;
 
 public class TTSUtils {
     private static final String TAG = TTSUtils.class.getSimpleName();

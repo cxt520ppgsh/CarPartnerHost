@@ -10,16 +10,16 @@ import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechRecognizer;
 import com.lisa.carpartner.host.utils.AppUtils;
-import com.lisa.carpartner.host.utils.JsonParser;
-import com.lisa.carpartner.host.utils.XmlParser;
-import com.lisa.carpartner.host.utils.voice.LogUtils;
+import com.lisa.carpartner.host.utils.voice.JsonParser;
+import com.lisa.carpartner.host.utils.voice.XmlParser;
+import com.lisa.carpartner.host.utils.LogUtils;
 
-public class STSUtils {
-    private static final String TAG = STSUtils.class.getSimpleName();
+public class STTUtils {
+    private static final String TAG = STTUtils.class.getSimpleName();
     private static final SoundToTextConfig SOUND_TO_TEXT_CONFIG = new SoundToTextConfig();
 
     public interface OnlineSoundToTextCallback {
-        void onStart();
+        void onStartSoundToText();
 
         void onSoundToText(String text, boolean isLast);
 
@@ -38,19 +38,20 @@ public class STSUtils {
         mIat.setParameter(SpeechConstant.VAD_BOS, SOUND_TO_TEXT_CONFIG.VAD_BOS);
         mIat.setParameter(SpeechConstant.VAD_EOS, SOUND_TO_TEXT_CONFIG.VAD_EOS);
         mIat.setParameter(SpeechConstant.ASR_PTT, SOUND_TO_TEXT_CONFIG.ASR_PTT);
+        mIat.setParameter(SpeechConstant.NET_TIMEOUT, SOUND_TO_TEXT_CONFIG.NET_TIMEOUT);
         mIat.startListening(new RecognizerListener() {
             private String resultText = "";
 
             @Override
             public void onVolumeChanged(int volume, byte[] bytes) {
-                LogUtils.d(TAG, "onVolumeChanged " + volume);
+//                LogUtils.d(TAG, "onVolumeChanged " + volume);
             }
 
             @Override
             public void onBeginOfSpeech() {
                 LogUtils.d(TAG, "onBeginOfSpeech ");
                 if (onlineSoundToTextCallback != null) {
-                    onlineSoundToTextCallback.onStart();
+                    onlineSoundToTextCallback.onStartSoundToText();
                 }
             }
 

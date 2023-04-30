@@ -1,17 +1,13 @@
 package com.lisa.carpartner.host;
 
 import android.app.Application;
+import android.content.Intent;
 
-import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.SpeechConstant;
-import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.VoiceWakeuper;
-import com.lisa.carpartner.host.utils.AppUtils;
 import com.lisa.carpartner.host.utils.Constant;
-import com.lisa.carpartner.host.utils.voice.LogUtils;
-import com.lisa.carpartner.host.utils.voice.stt.STSUtils;
-import com.lisa.carpartner.host.utils.voice.wake.WakeUtils;
+import com.lisa.carpartner.host.utils.LogUtils;
 
 public class MainApp extends Application {
     private static final String TAG = MainApp.class.getSimpleName();
@@ -20,6 +16,7 @@ public class MainApp extends Application {
     public void onCreate() {
         super.onCreate();
         initIfly();
+        startService(new Intent(this, MainService.class));
     }
 
     private void initIfly() {
@@ -34,32 +31,6 @@ public class MainApp extends Application {
                 .append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC)
                 .toString());
         VoiceWakeuper.createWakeuper(this, i -> LogUtils.d(TAG, "VoiceWakeuper on init " + i));
-//        WakeUtils.startWakeUp(new WakeUtils.OnWakeupCallback() {
-//            @Override
-//            public void onWakeUp() {
-//                STSUtils.startOnlineSoundToText(new STSUtils.OnlineSoundToTextCallback() {
-//                    @Override
-//                    public void onStart() {
-//
-//                    }
-//
-//                    @Override
-//                    public void onSoundToText(String text, boolean isLast) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(SpeechError speechError) {
-//
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onError(SpeechError speechError) {
-//
-//            }
-//        });
     }
 
 }

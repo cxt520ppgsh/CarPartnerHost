@@ -1,16 +1,13 @@
 package com.lisa.carpartner.host.utils.voice.wake;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechError;
-import com.iflytek.cloud.SpeechEvent;
 import com.iflytek.cloud.VoiceWakeuper;
 import com.iflytek.cloud.WakeuperListener;
 import com.iflytek.cloud.WakeuperResult;
-import com.lisa.carpartner.host.utils.AppUtils;
-import com.lisa.carpartner.host.utils.voice.LogUtils;
+import com.lisa.carpartner.host.utils.LogUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +15,7 @@ import org.json.JSONObject;
 public class WakeUtils {
     private static final String TAG = WakeUtils.class.getSimpleName();
     private static final WakeConfig WAKE_CONFIG = new WakeConfig();
+    private static VoiceWakeuper mIvw;
 
     public interface OnWakeupCallback {
         void onWakeUp();
@@ -25,8 +23,20 @@ public class WakeUtils {
         void onError(SpeechError speechError);
     }
 
+    public static boolean isWakeUpListing() {
+        LogUtils.d(TAG, "isWakeUpListing " + (mIvw != null && mIvw.isListening()));
+        return mIvw != null && mIvw.isListening();
+    }
+
+    public static void stopWakeUp() {
+        if (mIvw == null) return;
+        LogUtils.d(TAG, "stopWakeUp ");
+        mIvw.stopListening();
+    }
+
     public static void startWakeUp(OnWakeupCallback onWakeupCallback) {
-        VoiceWakeuper mIvw = VoiceWakeuper.getWakeuper();
+        LogUtils.d(TAG, "startWakeUp ");
+        mIvw = VoiceWakeuper.getWakeuper();
         if (mIvw == null) return;
         mIvw.setParameter(SpeechConstant.PARAMS, null);
         mIvw.setParameter(SpeechConstant.IVW_THRESHOLD, "0:" + WAKE_CONFIG.SENSITIVITY);
@@ -90,7 +100,7 @@ public class WakeUtils {
 
             @Override
             public void onVolumeChanged(int val) {
-                LogUtils.d(TAG, "onVolumeChanged " + val);
+//                LogUtils.d(TAG, "onVolumeChanged " + val);
             }
         });
     }

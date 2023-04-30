@@ -12,22 +12,17 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/startOfflineWakeBt"
+            android:id="@+id/startBt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="开启离线语音识别"></Button>
+            android:text=""></Button>
 
-        <Button
-            android:id="@+id/startOnlineSttBt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="开始语音识别"></Button>
-
-        <TextView
-            android:id="@+id/onlineSttTv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"></TextView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/contentRv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/teal_200"
+            android:textColor="@color/white"></androidx.recyclerview.widget.RecyclerView>
     </LinearLayout>
 
 

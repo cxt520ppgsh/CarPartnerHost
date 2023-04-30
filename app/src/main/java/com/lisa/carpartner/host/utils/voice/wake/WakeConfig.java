@@ -8,11 +8,11 @@ import com.lisa.carpartner.host.utils.Constant;
 public class WakeConfig {
     // 唤醒门限值，根据资源携带的唤醒词个数按照“id:门限;id:门限”的格式传入
     public final int MIN_SENSITIVITY = 3000;
-    public final int MAX_SENSITIVITY = 0;
-    public final int SENSITIVITY = MAX_SENSITIVITY;
+    public final int MAX_SENSITIVITY = 20;
+    public final int SENSITIVITY = 500;
     //模式 0：关闭优化功能，禁止向服务端发送本地挑选数据；
-    //模式 1：开启优化功能，允许向服务端发送本地挑选数据；
-    public final String IVW_NET_MODE = "1";
+    //模式 1：开启优化功能，允许向服务端发送本地挑选数据；需要自行管理优化数据
+    public final String IVW_NET_MODE = "0";
     // 设置唤醒模式
     public final String IVW_SST = "wakeup";
     //0：单次唤醒

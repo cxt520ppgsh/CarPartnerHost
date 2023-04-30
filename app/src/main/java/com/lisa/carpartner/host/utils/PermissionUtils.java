@@ -8,8 +8,6 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
-import com.lisa.carpartner.host.utils.voice.LogUtils;
-
 import java.util.Map;
 
 public class PermissionUtils {
@@ -27,6 +25,7 @@ public class PermissionUtils {
             Manifest.permission.READ_CONTACTS,
 //            Manifest.permission.WRITE_SETTINGS,
             Manifest.permission.MODIFY_AUDIO_SETTINGS,
+            Manifest.permission.FOREGROUND_SERVICE,
     };
 
     public static void requestPermissionIfNeed(ComponentActivity activity) {
