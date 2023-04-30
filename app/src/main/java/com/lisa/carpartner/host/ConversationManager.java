@@ -1,9 +1,8 @@
 package com.lisa.carpartner.host;
 
-import android.media.MediaPlayer;
-
 import com.iflytek.cloud.SpeechError;
-import com.lisa.carpartner.host.utils.AppUtils;
+import com.lisa.carpartner.host.utils.UiThreadUtils;
+import com.lisa.carpartner.host.utils.voice.ring.RingUtils;
 import com.lisa.carpartner.host.utils.voice.stt.STTUtils;
 import com.lisa.carpartner.host.utils.voice.wake.WakeUtils;
 
@@ -17,6 +16,10 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback, STTUtils
     public Set<ConversationCallback> conversationCallbacks = new HashSet<>();
 
     private Content currentContent;
+
+    private boolean isConversationStart = false;
+
+    private static final int CONVERSATION_TIMOUNT = 5000;
 
     private List<Content> contents = new ArrayList<>();
 
@@ -45,33 +48,32 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback, STTUtils
     }
 
     @Override
-    public void onWakeUp() {
+    public void onWakeUpStartListening() {
         contents.clear();
         fireContentsUpdate();
-        MediaPlayer mediaPlayer = MediaPlayer.create(AppUtils.getContext(), R.raw.ding);
-        mediaPlayer.setOnCompletionListener(mp -> {
-                    currentContent = new Content();
-                    currentContent.speaker = Content.SPEAKER_VOICEUI;
-                    currentContent.words = Content.SPEAKER_WORDS;
-                    contents.add(currentContent);
-                    fireContentsUpdate();
-                    STTUtils.startOnlineSoundToText(ConversationManager.this);
-                }
-        );
-        mediaPlayer.start();
+    }
+
+    @Override
+    public void onWakeUpStopListening() {
+        contents.clear();
+        fireContentsUpdate();
+    }
+
+    @Override
+    public void onWakeUp() {
+        startConversation();
     }
 
     @Override
     public void onStartSoundToText() {
+        resetConversationTimount();
         currentContent = new Content();
         contents.add(currentContent);
-        currentContent.speaker = Content.SPEAKER_USER;
-        currentContent.words = "...";
-        fireContentsUpdate();
     }
 
     @Override
     public void onSoundToText(String text, boolean isLast) {
+        resetConversationTimount();
         currentContent.speaker = Content.SPEAKER_USER;
         currentContent.words += text;
         if (isLast) {
@@ -81,6 +83,7 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback, STTUtils
 
     @Override
     public void onError(SpeechError speechError) {
+        resetConversationTimount();
         currentContent = new Content();
         contents.add(currentContent);
         currentContent.speaker = Content.SPEAKER_VOICEUI;
@@ -89,10 +92,6 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback, STTUtils
     }
 
     public interface ConversationCallback {
-
-        void onWakeUpListeningStart();
-
-        void onWakeUpListeningStop();
 
         void onConversationStart();
 
@@ -108,13 +107,64 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback, STTUtils
         }
     }
 
+    private void fireConversationStart() {
+        for (ConversationCallback callback : conversationCallbacks) {
+            if (callback == null) continue;
+            callback.onConversationStart();
+        }
+    }
+
+    private void fireConversationEnd() {
+        for (ConversationCallback callback : conversationCallbacks) {
+            if (callback == null) continue;
+            callback.onConversationEnd();
+        }
+    }
+
+    private void resetConversationTimount() {
+        UiThreadUtils.removeCallbacks(onConversationTimountRunnable);
+        UiThreadUtils.postDelayed(onConversationTimountRunnable, CONVERSATION_TIMOUNT);
+    }
+
+    private void startConversation() {
+        if (isConversationStart) {
+            resetConversationTimount();
+            return;
+        }
+        isConversationStart = true;
+        fireConversationStart();
+        resetConversationTimount();
+        contents.clear();
+        fireContentsUpdate();
+        RingUtils.playDing(mp -> {
+            currentContent = new Content();
+            currentContent.speaker = Content.SPEAKER_VOICEUI;
+            currentContent.words = Content.SPEAKER_WORDS;
+            contents.add(currentContent);
+            fireContentsUpdate();
+            STTUtils.startOnlineSoundToText(ConversationManager.this);
+        });
+    }
+
+    private void stopConversation() {
+        if (!isConversationStart) return;
+        isConversationStart = false;
+        contents.clear();
+        fireContentsUpdate();
+        fireConversationEnd();
+    }
+
+
+    private Runnable onConversationTimountRunnable = () -> {
+        stopConversation();
+    };
 
     public static class Content {
         public static String SPEAKER_VOICEUI = "LiSA";
         public static String SPEAKER_WORDS = "请说";
         public static String SPEAKER_USER = "你";
         String speaker;
-        String words;
+        String words = "";
     }
 
     private static class Holder {

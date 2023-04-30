@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private Button startBt;
     private RecyclerView contentRv;
     private ConversationRvAdapter conversationRvAdapter;
+    private int dataSize = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,15 +60,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         ConversationManager.getInstance().registerConversationCallback(new ConversationManager.ConversationCallback() {
-            @Override
-            public void onWakeUpListeningStart() {
-
-            }
-
-            @Override
-            public void onWakeUpListeningStop() {
-
-            }
 
             @Override
             public void onConversationStart() {
@@ -76,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onConversationUpdate(List<ConversationManager.Content> content) {
-                conversationRvAdapter.notifyDataSetChanged();
+                contentRv.getAdapter().notifyDataSetChanged();
             }
 
             @Override

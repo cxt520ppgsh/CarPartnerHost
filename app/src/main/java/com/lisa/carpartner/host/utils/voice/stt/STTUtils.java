@@ -79,6 +79,9 @@ public class STTUtils {
                 if (onlineSoundToTextCallback != null) {
                     onlineSoundToTextCallback.onSoundToText(text, isLast);
                 }
+                if (isLast) {
+                    LogUtils.d(TAG, "onResult : " + resultText);
+                }
             }
 
             @Override

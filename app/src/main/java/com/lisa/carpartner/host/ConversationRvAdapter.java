@@ -18,8 +18,7 @@ public class ConversationRvAdapter extends RecyclerView.Adapter<ConversationRvAd
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.conversation_rv_item_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.conversation_rv_item_layout, parent, false);
         return new ViewHolder(view);
     }
 

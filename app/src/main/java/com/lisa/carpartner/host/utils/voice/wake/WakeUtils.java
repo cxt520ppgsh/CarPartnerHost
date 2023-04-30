@@ -16,8 +16,13 @@ public class WakeUtils {
     private static final String TAG = WakeUtils.class.getSimpleName();
     private static final WakeConfig WAKE_CONFIG = new WakeConfig();
     private static VoiceWakeuper mIvw;
+    private static OnWakeupCallback mOnWakeupCallback;
 
     public interface OnWakeupCallback {
+        void onWakeUpStartListening();
+
+        void onWakeUpStopListening();
+
         void onWakeUp();
 
         void onError(SpeechError speechError);
@@ -32,9 +37,11 @@ public class WakeUtils {
         if (mIvw == null) return;
         LogUtils.d(TAG, "stopWakeUp ");
         mIvw.stopListening();
+        if (mOnWakeupCallback != null) mOnWakeupCallback.onWakeUpStopListening();
     }
 
     public static void startWakeUp(OnWakeupCallback onWakeupCallback) {
+        mOnWakeupCallback = onWakeupCallback;
         LogUtils.d(TAG, "startWakeUp ");
         mIvw = VoiceWakeuper.getWakeuper();
         if (mIvw == null) return;
@@ -89,6 +96,7 @@ public class WakeUtils {
 
             @Override
             public void onEvent(int eventType, int isLast, int arg2, Bundle obj) {
+                LogUtils.d(TAG, "onEvent " + eventType);
                 switch (eventType) {
                     // EVENT_RECORD_DATA 事件仅在 NOTIFY_RECORD_DATA 参数值为 真 时返回
 //                    case SpeechEvent.EVENT_RECORD_DATA:
@@ -103,5 +111,6 @@ public class WakeUtils {
 //                LogUtils.d(TAG, "onVolumeChanged " + val);
             }
         });
+        if (mOnWakeupCallback != null) mOnWakeupCallback.onWakeUpStartListening();
     }
 }

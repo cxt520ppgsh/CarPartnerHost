@@ -16,7 +16,7 @@ import com.iflytek.cloud.SpeechError;
 import com.lisa.carpartner.host.utils.LogUtils;
 import com.lisa.carpartner.host.utils.voice.wake.WakeUtils;
 
-public class MainService extends Service implements WakeUtils.OnWakeupCallback {
+public class MainService extends Service {
     private static final String TAG = MainService.class.getSimpleName();
 
     public MainService() {
@@ -41,11 +41,6 @@ public class MainService extends Service implements WakeUtils.OnWakeupCallback {
         LogUtils.d(TAG, "onStart");
         startForeground();
         ConversationManager.getInstance().startWakeUp();
-    }
-
-    @Override
-    public void onWakeUp() {
-
     }
 
     private void startForeground() {
@@ -81,11 +76,5 @@ public class MainService extends Service implements WakeUtils.OnWakeupCallback {
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-
-    @Override
-    public void onError(SpeechError speechError) {
-
     }
 }
