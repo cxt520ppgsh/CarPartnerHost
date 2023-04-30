@@ -14,13 +14,10 @@ import java.util.Set;
 public class ConversationManager implements WakeUtils.OnWakeupCallback, STTUtils.OnlineSoundToTextCallback {
 
     public Set<ConversationCallback> conversationCallbacks = new HashSet<>();
-
     private Content currentContent;
-
     private boolean isConversationStart = false;
-
+    private String soundToTextResult = "";
     private static final int CONVERSATION_TIMOUNT = 5000;
-
     private List<Content> contents = new ArrayList<>();
 
     public static ConversationManager getInstance() {
@@ -49,14 +46,12 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback, STTUtils
 
     @Override
     public void onWakeUpStartListening() {
-        contents.clear();
-        fireContentsUpdate();
+        clearContent();
     }
 
     @Override
     public void onWakeUpStopListening() {
-        contents.clear();
-        fireContentsUpdate();
+        clearContent();
     }
 
     @Override
@@ -66,29 +61,23 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback, STTUtils
 
     @Override
     public void onStartSoundToText() {
+        soundToTextResult = "";
         resetConversationTimount();
-        currentContent = new Content();
-        contents.add(currentContent);
+        appendContent(new Content(Content.SPEAKER_USER, ""));
     }
 
     @Override
     public void onSoundToText(String text, boolean isLast) {
+        soundToTextResult += text;
         resetConversationTimount();
-        currentContent.speaker = Content.SPEAKER_USER;
-        currentContent.words += text;
-        if (isLast) {
-            fireContentsUpdate();
-        }
+        if (isLast) modifyCurrentContent(new Content(Content.SPEAKER_USER, soundToTextResult));
     }
 
     @Override
     public void onError(SpeechError speechError) {
+        soundToTextResult = speechError.getErrorDescription();
         resetConversationTimount();
-        currentContent = new Content();
-        contents.add(currentContent);
-        currentContent.speaker = Content.SPEAKER_VOICEUI;
-        currentContent.words += speechError.getErrorDescription();
-        fireContentsUpdate();
+        modifyCurrentContent(new Content(Content.SPEAKER_VOICEUI, speechError.getErrorDescription()));
     }
 
     public interface ConversationCallback {
@@ -154,6 +143,24 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback, STTUtils
         fireConversationEnd();
     }
 
+    private void clearContent() {
+        contents.clear();
+        fireContentsUpdate();
+    }
+
+    private void appendContent(Content content) {
+        if (content == null) return;
+        if (contents.contains(content)) return;
+        currentContent = content;
+        contents.add(content);
+        fireContentsUpdate();
+    }
+
+    private void modifyCurrentContent(Content content) {
+        currentContent.speaker = content.speaker;
+        currentContent.words = content.words;
+        fireContentsUpdate();
+    }
 
     private Runnable onConversationTimountRunnable = () -> {
         stopConversation();
@@ -165,6 +172,15 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback, STTUtils
         public static String SPEAKER_USER = "你";
         String speaker;
         String words = "";
+
+        private Content() {
+
+        }
+
+        public Content(String speaker, String words) {
+            this.speaker = speaker;
+            this.words = words;
+        }
     }
 
     private static class Holder {
