@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onConversationUpdate(List<ConversationMsg> conversationMsgs) {
                 contentRv.getAdapter().notifyDataSetChanged();
+                contentRv.scrollToPosition(contentRv.getAdapter().getItemCount() - 1);
             }
 
             @Override
