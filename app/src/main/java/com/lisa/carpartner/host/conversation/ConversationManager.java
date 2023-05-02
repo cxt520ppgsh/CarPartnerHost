@@ -20,7 +20,7 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback,
 
     public Set<ConversationCallback> conversationCallbacks = new HashSet<>();
     private ConversationMsg currentContent;
-    private boolean isConversationStart = false;
+    private volatile boolean isConversationStart = false;
     private String soundToTextResult = "";
     private static final int CONVERSATION_TIMOUNT = 50000;
     private List<ConversationMsg> contents = new ArrayList<>();
@@ -69,6 +69,7 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback,
     public void onStartSoundToText() {
         if (!isConversationStart) return;
         soundToTextResult = "";
+        appendContent(new ConversationMsg(ConversationMsg.SPEAKER_USER, "..."));
         resetConversationTimount();
     }
 
@@ -88,21 +89,16 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback,
     public void onChatGptResponse(String response) {
         if (!isConversationStart) return;
         modifyCurrentContent(new ConversationMsg(ConversationMsg.SPEAKER_AI, response));
-        RingUtils.playDing(mp -> {
-            appendContent(new ConversationMsg(ConversationMsg.SPEAKER_USER, "..."));
-            STTUtils.startOnlineSoundToText(ConversationManager.this);
-        });
+        STTUtils.startOnlineSoundToText(ConversationManager.this);
     }
 
     @Override
     public void onError(SpeechError speechError) {
+        if (!isConversationStart) return;
         soundToTextResult = speechError.getErrorDescription();
         resetConversationTimount();
         modifyCurrentContent(new ConversationMsg(ConversationMsg.SPEAKER_AI, speechError.getErrorDescription()));
-        RingUtils.playDing(mp -> {
-            appendContent(new ConversationMsg(ConversationMsg.SPEAKER_USER, "..."));
-            STTUtils.startOnlineSoundToText(ConversationManager.this);
-        });
+        STTUtils.startOnlineSoundToText(ConversationManager.this);
     }
 
     public interface ConversationCallback {
@@ -140,7 +136,7 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback,
         UiThreadUtils.postDelayed(onConversationTimountRunnable, CONVERSATION_TIMOUNT);
     }
 
-    private void startConversation() {
+    public void startConversation() {
         if (isConversationStart) {
             resetConversationTimount();
             return;
@@ -151,14 +147,11 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback,
         contents.clear();
         fireContentsUpdate();
         chatGptSession.startNewChat();
-        RingUtils.playDing(mp -> {
-            appendContent(new ConversationMsg(ConversationMsg.SPEAKER_AI, "请说"));
-            appendContent(new ConversationMsg(ConversationMsg.SPEAKER_USER, ""));
-            STTUtils.startOnlineSoundToText(ConversationManager.this);
-        });
+        appendContent(new ConversationMsg(ConversationMsg.SPEAKER_AI, "请说"));
+        STTUtils.startOnlineSoundToText(ConversationManager.this);
     }
 
-    private void stopConversation() {
+    public void stopConversation() {
         if (!isConversationStart) return;
         isConversationStart = false;
         chatGptSession.stopChat();

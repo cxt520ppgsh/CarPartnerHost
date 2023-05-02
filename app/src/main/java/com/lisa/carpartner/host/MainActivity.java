@@ -11,8 +11,6 @@ import com.lisa.carpartner.host.conversation.ConversationManager;
 import com.lisa.carpartner.host.conversation.ConversationMsg;
 import com.lisa.carpartner.host.utils.PermissionUtils;
 import com.lisa.carpartner.host.utils.UiThreadUtils;
-import com.lisa.carpartner.host.utils.chat.ChatCallBack;
-import com.lisa.carpartner.host.utils.chat.ChatGptSession;
 import com.lisa.carpartner.host.utils.voice.wake.WakeUtils;
 
 import java.util.List;
@@ -45,21 +43,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void setListener() {
         startBt.setOnClickListener(v -> {
-//            if (WakeUtils.isWakeUpListing()) {
-//                MainService.stopWakeUp();
-//            } else {
-//                MainService.startWakeUp();
-//            }
-//            startBt.setEnabled(false);
-//            UiThreadUtils.runOnUiThread(() -> refreshUI(), 1500);
-            ChatGptSession chatGptSession = new ChatGptSession();
-            chatGptSession.startNewChat();
-            chatGptSession.askToGpt("今天星期几", new ChatCallBack() {
-                @Override
-                public void onChatGptResponse(String response) {
-                    System.out.println("cxt " + response);
-                }
-            });
+            if (WakeUtils.isWakeUpListing()) {
+                MainService.stop();
+            } else {
+                MainService.start();
+            }
+            startBt.setEnabled(false);
+            UiThreadUtils.runOnUiThread(() -> refreshUI(), 1500);
         });
     }
 

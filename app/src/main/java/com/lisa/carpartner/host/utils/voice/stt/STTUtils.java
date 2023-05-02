@@ -1,5 +1,6 @@
 package com.lisa.carpartner.host.utils.voice.stt;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,6 +14,7 @@ import com.lisa.carpartner.host.utils.AppUtils;
 import com.lisa.carpartner.host.utils.voice.JsonParser;
 import com.lisa.carpartner.host.utils.voice.XmlParser;
 import com.lisa.carpartner.host.utils.LogUtils;
+import com.lisa.carpartner.host.utils.voice.ring.RingUtils;
 
 public class STTUtils {
     private static final String TAG = STTUtils.class.getSimpleName();
@@ -39,7 +41,7 @@ public class STTUtils {
         mIat.setParameter(SpeechConstant.VAD_EOS, SOUND_TO_TEXT_CONFIG.VAD_EOS);
         mIat.setParameter(SpeechConstant.ASR_PTT, SOUND_TO_TEXT_CONFIG.ASR_PTT);
         mIat.setParameter(SpeechConstant.NET_TIMEOUT, SOUND_TO_TEXT_CONFIG.NET_TIMEOUT);
-        mIat.startListening(new RecognizerListener() {
+        RecognizerListener recognizerListener = new RecognizerListener() {
             private String resultText = "";
 
             @Override
@@ -96,7 +98,12 @@ public class STTUtils {
             public void onEvent(int i, int i1, int i2, Bundle bundle) {
 
             }
-        });
+        };
+        RingUtils.playDing(mp -> mIat.startListening(recognizerListener),
+                (mp, what, extra) -> {
+                    mIat.startListening(recognizerListener);
+                    return false;
+                });
     }
 
 }

@@ -44,7 +44,7 @@ public class ChatGptSession {
                 .build();
         if (call != null) call.cancel();
         messageList.clear();
-//        messageList.add(new ChatGptConversationMsg("system", CHAT_GPT_CONFIG.ROLE));
+        messageList.add(new ChatGptConversationMsg("system", CHAT_GPT_CONFIG.ROLE));
     }
 
     public void stopChat() {
@@ -73,7 +73,7 @@ public class ChatGptSession {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 LogUtils.d(TAG, "onFailure" + "Failed to load response due to " + e.getMessage());
-                ChatGptSession.this.onResponse("Failed to load response due to " + e.getMessage(), chatCallBack);
+                ChatGptSession.this.onError("Failed to load response due to " + e.getMessage(), chatCallBack);
             }
 
             @Override
@@ -95,7 +95,7 @@ public class ChatGptSession {
                     }
                 } else {
                     LogUtils.d(TAG, "onFailure" + "Failed to load response due to " + response.body().toString());
-                    ChatGptSession.this.onResponse("Failed to load response due to " + response.body().toString(), chatCallBack);
+                    ChatGptSession.this.onError("Failed to load response due to " + response.body().toString(), chatCallBack);
                 }
             }
         });
@@ -105,6 +105,13 @@ public class ChatGptSession {
         messageList.add(new ChatGptConversationMsg(ChatGptConversationMsg.SPEAKER_CHATGPT, response));
         UiThreadUtils.runOnUiThread(() -> {
             if (chatCallBack != null) chatCallBack.onChatGptResponse(response);
+        });
+    }
+
+    private void onError(String error, ChatCallBack chatCallBack) {
+        messageList.add(new ChatGptConversationMsg(ChatGptConversationMsg.SPEAKER_CHATGPT_ERROR, error));
+        UiThreadUtils.runOnUiThread(() -> {
+            if (chatCallBack != null) chatCallBack.onChatGptResponse(error);
         });
     }
 
@@ -119,6 +126,9 @@ public class ChatGptSession {
 
             JSONArray messageArr = new JSONArray();
             for (ChatGptConversationMsg conversationMsg : messageList) {
+                if (conversationMsg.speaker.equals(ChatGptConversationMsg.SPEAKER_CHATGPT_ERROR)) {
+                    continue;
+                }
                 JSONObject obj = new JSONObject();
                 obj.put("role", conversationMsg.speaker);
                 obj.put("content", conversationMsg.content);
@@ -128,6 +138,7 @@ public class ChatGptSession {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         return jsonBody;
     }
 

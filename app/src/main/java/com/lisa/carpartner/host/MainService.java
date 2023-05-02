@@ -22,13 +22,23 @@ public class MainService extends Service {
 
     }
 
-    public static void startWakeUp() {
+    public static void start() {
         ConversationManager.getInstance().startWakeUp();
     }
 
-    public static void stopWakeUp() {
+    public static void stop() {
         ConversationManager.getInstance().stopWakeUp();
+        ConversationManager.getInstance().stopConversation();
     }
+
+    public static void startConversation() {
+        ConversationManager.getInstance().startConversation();
+    }
+
+    public static void stopConversation() {
+        ConversationManager.getInstance().stopConversation();
+    }
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
