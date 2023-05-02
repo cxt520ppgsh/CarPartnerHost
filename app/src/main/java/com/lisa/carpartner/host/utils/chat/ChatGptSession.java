@@ -1,5 +1,7 @@
 package com.lisa.carpartner.host.utils.chat;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.lisa.carpartner.host.utils.LogUtils;
@@ -94,8 +96,8 @@ public class ChatGptSession {
                         e.printStackTrace();
                     }
                 } else {
-                    LogUtils.d(TAG, "onFailure" + "Failed to load response due to " + response.body().toString());
-                    ChatGptSession.this.onError("Failed to load response due to " + response.body().toString(), chatCallBack);
+                    LogUtils.d(TAG, "onFailure" + "Failed to load response due to " + response);
+                    ChatGptSession.this.onError("Failed to load response due to " + response, chatCallBack);
                 }
             }
         });
