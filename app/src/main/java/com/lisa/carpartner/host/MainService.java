@@ -12,9 +12,8 @@ import android.os.IBinder;
 
 import androidx.core.app.NotificationCompat;
 
-import com.iflytek.cloud.SpeechError;
+import com.lisa.carpartner.host.conversation.ConversationManager;
 import com.lisa.carpartner.host.utils.LogUtils;
-import com.lisa.carpartner.host.utils.voice.wake.WakeUtils;
 
 public class MainService extends Service {
     private static final String TAG = MainService.class.getSimpleName();

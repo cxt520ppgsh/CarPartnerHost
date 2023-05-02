@@ -1,16 +1,18 @@
 package com.lisa.carpartner.host;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lisa.carpartner.host.conversation.ConversationManager;
+import com.lisa.carpartner.host.conversation.ConversationMsg;
 import com.lisa.carpartner.host.utils.PermissionUtils;
 import com.lisa.carpartner.host.utils.UiThreadUtils;
-import com.lisa.carpartner.host.utils.voice.stt.STTUtils;
+import com.lisa.carpartner.host.utils.chat.ChatCallBack;
+import com.lisa.carpartner.host.utils.chat.ChatGptSession;
 import com.lisa.carpartner.host.utils.voice.wake.WakeUtils;
 
 import java.util.List;
@@ -43,13 +45,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void setListener() {
         startBt.setOnClickListener(v -> {
-            if (WakeUtils.isWakeUpListing()) {
-                MainService.stopWakeUp();
-            } else {
-                MainService.startWakeUp();
-            }
-            startBt.setEnabled(false);
-            UiThreadUtils.runOnUiThread(() -> refreshUI(), 1500);
+//            if (WakeUtils.isWakeUpListing()) {
+//                MainService.stopWakeUp();
+//            } else {
+//                MainService.startWakeUp();
+//            }
+//            startBt.setEnabled(false);
+//            UiThreadUtils.runOnUiThread(() -> refreshUI(), 1500);
+            ChatGptSession chatGptSession = new ChatGptSession();
+            chatGptSession.startNewChat();
+            chatGptSession.askToGpt("今天星期几", new ChatCallBack() {
+                @Override
+                public void onChatGptResponse(String response) {
+                    System.out.println("cxt " + response);
+                }
+            });
         });
     }
 
@@ -67,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onConversationUpdate(List<ConversationManager.Content> content) {
+            public void onConversationUpdate(List<ConversationMsg> conversationMsgs) {
                 contentRv.getAdapter().notifyDataSetChanged();
             }
 

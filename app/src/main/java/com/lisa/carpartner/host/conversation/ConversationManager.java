@@ -1,7 +1,10 @@
-package com.lisa.carpartner.host;
+package com.lisa.carpartner.host.conversation;
 
 import com.iflytek.cloud.SpeechError;
+import com.lisa.carpartner.host.utils.ToastUtils;
 import com.lisa.carpartner.host.utils.UiThreadUtils;
+import com.lisa.carpartner.host.utils.chat.ChatCallBack;
+import com.lisa.carpartner.host.utils.chat.ChatGptSession;
 import com.lisa.carpartner.host.utils.voice.ring.RingUtils;
 import com.lisa.carpartner.host.utils.voice.stt.STTUtils;
 import com.lisa.carpartner.host.utils.voice.wake.WakeUtils;
@@ -11,20 +14,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ConversationManager implements WakeUtils.OnWakeupCallback, STTUtils.OnlineSoundToTextCallback {
+public class ConversationManager implements WakeUtils.OnWakeupCallback,
+        STTUtils.OnlineSoundToTextCallback,
+        ChatCallBack {
 
     public Set<ConversationCallback> conversationCallbacks = new HashSet<>();
-    private Content currentContent;
+    private ConversationMsg currentContent;
     private boolean isConversationStart = false;
     private String soundToTextResult = "";
-    private static final int CONVERSATION_TIMOUNT = 5000;
-    private List<Content> contents = new ArrayList<>();
+    private static final int CONVERSATION_TIMOUNT = 50000;
+    private List<ConversationMsg> contents = new ArrayList<>();
+    private ChatGptSession chatGptSession = new ChatGptSession();
 
     public static ConversationManager getInstance() {
         return ConversationManager.Holder.instance;
     }
 
-    public List<Content> getContents() {
+    public List<ConversationMsg> getContents() {
         return contents;
     }
 
@@ -61,30 +67,49 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback, STTUtils
 
     @Override
     public void onStartSoundToText() {
+        if (!isConversationStart) return;
         soundToTextResult = "";
         resetConversationTimount();
-        appendContent(new Content(Content.SPEAKER_USER, ""));
     }
 
     @Override
     public void onSoundToText(String text, boolean isLast) {
+        if (!isConversationStart) return;
         soundToTextResult += text;
         resetConversationTimount();
-        if (isLast) modifyCurrentContent(new Content(Content.SPEAKER_USER, soundToTextResult));
+        if (isLast) {
+            modifyCurrentContent(new ConversationMsg(ConversationMsg.SPEAKER_USER, soundToTextResult));
+            appendContent(new ConversationMsg(ConversationMsg.SPEAKER_AI, "..."));
+            chatGptSession.askToGpt(soundToTextResult, this);
+        }
+    }
+
+    @Override
+    public void onChatGptResponse(String response) {
+        if (!isConversationStart) return;
+        modifyCurrentContent(new ConversationMsg(ConversationMsg.SPEAKER_AI, response));
+        RingUtils.playDing(mp -> {
+            appendContent(new ConversationMsg(ConversationMsg.SPEAKER_USER, "..."));
+            STTUtils.startOnlineSoundToText(ConversationManager.this);
+        });
     }
 
     @Override
     public void onError(SpeechError speechError) {
         soundToTextResult = speechError.getErrorDescription();
         resetConversationTimount();
-        modifyCurrentContent(new Content(Content.SPEAKER_VOICEUI, speechError.getErrorDescription()));
+        modifyCurrentContent(new ConversationMsg(ConversationMsg.SPEAKER_AI, speechError.getErrorDescription()));
+        RingUtils.playDing(mp -> {
+            appendContent(new ConversationMsg(ConversationMsg.SPEAKER_USER, "..."));
+            STTUtils.startOnlineSoundToText(ConversationManager.this);
+        });
     }
 
     public interface ConversationCallback {
 
         void onConversationStart();
 
-        void onConversationUpdate(List<Content> content);
+        void onConversationUpdate(List<ConversationMsg> content);
 
         void onConversationEnd();
     }
@@ -125,12 +150,10 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback, STTUtils
         resetConversationTimount();
         contents.clear();
         fireContentsUpdate();
+        chatGptSession.startNewChat();
         RingUtils.playDing(mp -> {
-            currentContent = new Content();
-            currentContent.speaker = Content.SPEAKER_VOICEUI;
-            currentContent.words = Content.SPEAKER_WORDS;
-            contents.add(currentContent);
-            fireContentsUpdate();
+            appendContent(new ConversationMsg(ConversationMsg.SPEAKER_AI, "请说"));
+            appendContent(new ConversationMsg(ConversationMsg.SPEAKER_USER, ""));
             STTUtils.startOnlineSoundToText(ConversationManager.this);
         });
     }
@@ -138,6 +161,7 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback, STTUtils
     private void stopConversation() {
         if (!isConversationStart) return;
         isConversationStart = false;
+        chatGptSession.stopChat();
         contents.clear();
         fireContentsUpdate();
         fireConversationEnd();
@@ -148,7 +172,7 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback, STTUtils
         fireContentsUpdate();
     }
 
-    private void appendContent(Content content) {
+    private void appendContent(ConversationMsg content) {
         if (content == null) return;
         if (contents.contains(content)) return;
         currentContent = content;
@@ -156,32 +180,15 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback, STTUtils
         fireContentsUpdate();
     }
 
-    private void modifyCurrentContent(Content content) {
+    private void modifyCurrentContent(ConversationMsg content) {
         currentContent.speaker = content.speaker;
-        currentContent.words = content.words;
+        currentContent.content = content.content;
         fireContentsUpdate();
     }
 
     private Runnable onConversationTimountRunnable = () -> {
         stopConversation();
     };
-
-    public static class Content {
-        public static String SPEAKER_VOICEUI = "LiSA";
-        public static String SPEAKER_WORDS = "请说";
-        public static String SPEAKER_USER = "你";
-        String speaker;
-        String words = "";
-
-        private Content() {
-
-        }
-
-        public Content(String speaker, String words) {
-            this.speaker = speaker;
-            this.words = words;
-        }
-    }
 
     private static class Holder {
         static ConversationManager instance = new ConversationManager();

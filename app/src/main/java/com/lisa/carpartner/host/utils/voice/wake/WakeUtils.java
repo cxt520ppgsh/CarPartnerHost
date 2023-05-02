@@ -41,6 +41,7 @@ public class WakeUtils {
     }
 
     public static void startWakeUp(OnWakeupCallback onWakeupCallback) {
+        if (isWakeUpListing()) return;
         mOnWakeupCallback = onWakeupCallback;
         LogUtils.d(TAG, "startWakeUp ");
         mIvw = VoiceWakeuper.getWakeuper();

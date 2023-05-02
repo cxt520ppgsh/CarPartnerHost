@@ -7,12 +7,15 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lisa.carpartner.host.conversation.ConversationManager;
+import com.lisa.carpartner.host.conversation.ConversationMsg;
+
 import java.util.List;
 
 public class ConversationRvAdapter extends RecyclerView.Adapter<ConversationRvAdapter.ViewHolder> {
-    private List<ConversationManager.Content> mData;
+    private List<ConversationMsg> mData;
 
-    public ConversationRvAdapter(List<ConversationManager.Content> data) {
+    public ConversationRvAdapter(List<ConversationMsg> data) {
         mData = data;
     }
 
@@ -24,7 +27,7 @@ public class ConversationRvAdapter extends RecyclerView.Adapter<ConversationRvAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mTextView.setText(mData.get(position).speaker + ":" + mData.get(position).words);
+        holder.mTextView.setText(mData.get(position).speaker + ":" + mData.get(position).content);
     }
 
     @Override

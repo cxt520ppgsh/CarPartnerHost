@@ -30,5 +30,5 @@ public class SoundToTextConfig {
     //设置标点符号,设置为"0"返回结果无标点,设置为"1"返回结果有标点
     public String ASR_PTT = "1";
 
-    public String NET_TIMEOUT = "4000";
+    public String NET_TIMEOUT = "10000";
 }
