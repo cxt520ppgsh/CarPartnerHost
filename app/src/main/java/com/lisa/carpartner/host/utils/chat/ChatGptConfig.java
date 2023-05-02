@@ -8,5 +8,8 @@ public class ChatGptConfig {
     public int MAX_TOKEN = 50;
     public boolean IS_STREAM = false;
 
-    public String ROLE = "你是一个傲娇大小姐，用这个语气和我讲话";
+    public String ROLE = "" +
+            "你是一个傲娇大小姐，" +
+            "用这个语气和我讲话, " +
+            "每次说话不超过25个中文";
 }
