@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import com.alibaba.fastjson.JSONObject;
 import com.lisa.carpartner.host.utils.AppUtils;
+import com.lisa.carpartner.host.utils.UiThreadUtils;
 import com.lisa.carpartner.host.utils.voice.ring.MediaPlayerUtils;
 
 import java.io.File;
@@ -81,6 +82,12 @@ public class TTSUtils2 {
                     ttsCallback.onCompelete();
                 }
                 return false;
+            });
+            UiThreadUtils.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (ttsCallback != null) ttsCallback.onStart();
+                }
             });
         });
     }

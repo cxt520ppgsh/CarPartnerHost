@@ -5,7 +5,7 @@ public class ChatGptConfig {
     public String API_KEY = "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";
     public String MODEL = "gpt-3.5-turbo";
     public double TEMPERATURE = 0.7;
-    public int MAX_TOKEN = 50;
+    public int MAX_TOKEN = 100;
     public boolean IS_STREAM = false;
 
     public String ROLE = "" +

@@ -21,6 +21,8 @@ public class TTSUtils {
     private static final TextToSoundConfig TEXT_TO_SOUND_CONFIG = new TextToSoundConfig();
 
     public interface TTSCallback {
+        void onStart();
+
         void onCompelete();
     }
 
@@ -29,8 +31,8 @@ public class TTSUtils {
         int code = mTts.startSpeaking(text, new SynthesizerListener() {
             @Override
             public void onSpeakBegin() {
-                //showTip("开始播放");
                 Log.d(TAG, "开始播放：" + System.currentTimeMillis());
+                if (ttsCallback != null) ttsCallback.onStart();
             }
 
             @Override
@@ -44,8 +46,7 @@ public class TTSUtils {
             }
 
             @Override
-            public void onBufferProgress(int percent, int beginPos, int endPos,
-                                         String info) {
+            public void onBufferProgress(int percent, int beginPos, int endPos, String info) {
                 Log.d(TAG, "onBufferProgress：" + percent);
 
             }

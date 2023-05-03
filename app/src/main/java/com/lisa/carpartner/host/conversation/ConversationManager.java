@@ -88,9 +88,17 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback,
     @Override
     public void onChatGptResponse(String response) {
         if (!isConversationStart) return;
-        modifyCurrentContent(new ConversationMsg(ConversationMsg.SPEAKER_AI, response));
-        TTSUtils2.startTextToSound(response, () ->
-                STTUtils.startOnlineSoundToText(ConversationManager.this));
+        TTSUtils2.startTextToSound(response, new TTSUtils.TTSCallback() {
+            @Override
+            public void onStart() {
+                modifyCurrentContent(new ConversationMsg(ConversationMsg.SPEAKER_AI, response));
+            }
+
+            @Override
+            public void onCompelete() {
+                STTUtils.startOnlineSoundToText(ConversationManager.this);
+            }
+        });
     }
 
     @Override
