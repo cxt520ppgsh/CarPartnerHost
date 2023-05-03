@@ -18,6 +18,7 @@ import com.lisa.carpartner.host.utils.voice.ring.MediaPlayerUtils;
 public class STTUtils {
     private static final String TAG = STTUtils.class.getSimpleName();
     private static final SoundToTextConfig SOUND_TO_TEXT_CONFIG = new SoundToTextConfig();
+    private static SpeechRecognizer mIat;
 
     public interface OnlineSoundToTextCallback {
         void onStartSoundToText();
@@ -28,7 +29,8 @@ public class STTUtils {
     }
 
     public static void startOnlineSoundToText(OnlineSoundToTextCallback onlineSoundToTextCallback) {
-        SpeechRecognizer mIat = SpeechRecognizer.createRecognizer(AppUtils.getContext(),
+        if (mIat != null && mIat.isListening()) return;
+        mIat = SpeechRecognizer.createRecognizer(AppUtils.getContext(),
                 i -> LogUtils.d(TAG, "SpeechRecognizer init status " + i));
         mIat.setParameter(SpeechConstant.CLOUD_GRAMMAR, SOUND_TO_TEXT_CONFIG.CLOUD_GRAMMAR);
         mIat.setParameter(SpeechConstant.SUBJECT, SOUND_TO_TEXT_CONFIG.SUBJECT);

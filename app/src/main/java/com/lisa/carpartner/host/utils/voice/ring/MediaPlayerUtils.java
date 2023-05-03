@@ -23,6 +23,7 @@ public class MediaPlayerUtils {
         MediaPlayer mediaPlayer = new MediaPlayer();
         try {
             mediaPlayer.setDataSource(path);
+            mediaPlayer.prepare();
         } catch (IOException e) {
             LogUtils.d(TAG, "play error " + e.getMessage());
             e.printStackTrace();

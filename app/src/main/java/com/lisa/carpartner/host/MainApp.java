@@ -2,12 +2,15 @@ package com.lisa.carpartner.host;
 
 import android.app.Application;
 import android.content.Intent;
+import android.media.MediaPlayer;
 
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.VoiceWakeuper;
 import com.lisa.carpartner.host.utils.Constant;
 import com.lisa.carpartner.host.utils.LogUtils;
+
+import java.io.IOException;
 
 public class MainApp extends Application {
     private static final String TAG = MainApp.class.getSimpleName();
