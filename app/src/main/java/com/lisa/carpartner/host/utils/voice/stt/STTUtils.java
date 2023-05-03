@@ -1,6 +1,5 @@
 package com.lisa.carpartner.host.utils.voice.stt;
 
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,7 +13,7 @@ import com.lisa.carpartner.host.utils.AppUtils;
 import com.lisa.carpartner.host.utils.voice.JsonParser;
 import com.lisa.carpartner.host.utils.voice.XmlParser;
 import com.lisa.carpartner.host.utils.LogUtils;
-import com.lisa.carpartner.host.utils.voice.ring.RingUtils;
+import com.lisa.carpartner.host.utils.voice.ring.MediaPlayerUtils;
 
 public class STTUtils {
     private static final String TAG = STTUtils.class.getSimpleName();
@@ -99,7 +98,7 @@ public class STTUtils {
 
             }
         };
-        RingUtils.playDing(mp -> mIat.startListening(recognizerListener),
+        MediaPlayerUtils.playDing(mp -> mIat.startListening(recognizerListener),
                 (mp, what, extra) -> {
                     mIat.startListening(recognizerListener);
                     return false;

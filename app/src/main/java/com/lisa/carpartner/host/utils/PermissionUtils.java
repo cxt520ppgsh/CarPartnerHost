@@ -16,6 +16,7 @@ public class PermissionUtils {
     private static final String[] REQUEST_PERMISSION = {
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA,
             Manifest.permission.ACCESS_FINE_LOCATION,
