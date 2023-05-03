@@ -1,4 +1,28 @@
 <resources>
     <string name="app_name">CarPartnerHost</string>
     <string name="app_id">fcb0ac50</string>
+    <string-array name="voicer_xtts_entries">
+        <item>楠楠</item>
+        <item>小关</item>
+        <item>宜丰</item>
+        <item>小曦</item>
+        <item>小燕</item>
+        <item>小杜</item>
+        <item>一菲</item>
+        <item>虫虫</item>
+        <item>凯瑟琳</item>
+        <!--  <item>小峰</item>-->
+    </string-array>
+    <string-array name="voicer_xtts_values">
+        <item>nannan</item>
+        <item>xiaoguan</item>
+        <item>yifeng</item>
+        <item>xiaoxi</item>
+        <item>xiaoyan</item>
+        <item>xiaodu</item>
+        <item>yifei</item>
+        <item>chongchong</item>
+        <item>catherine</item>
+        <!--   <item>xiaofeng</item>-->
+    </string-array>
 </resources>

@@ -11,6 +11,7 @@ import com.lisa.carpartner.host.conversation.ConversationManager;
 import com.lisa.carpartner.host.conversation.ConversationMsg;
 import com.lisa.carpartner.host.utils.PermissionUtils;
 import com.lisa.carpartner.host.utils.UiThreadUtils;
+import com.lisa.carpartner.host.utils.voice.tts.TTSUtils;
 import com.lisa.carpartner.host.utils.voice.wake.WakeUtils;
 
 import java.util.List;
@@ -20,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     private Button startBt;
     private RecyclerView contentRv;
     private ConversationRvAdapter conversationRvAdapter;
-    private int dataSize = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

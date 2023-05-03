@@ -7,6 +7,7 @@ import com.lisa.carpartner.host.utils.chat.ChatCallBack;
 import com.lisa.carpartner.host.utils.chat.ChatGptSession;
 import com.lisa.carpartner.host.utils.voice.ring.RingUtils;
 import com.lisa.carpartner.host.utils.voice.stt.STTUtils;
+import com.lisa.carpartner.host.utils.voice.tts.TTSUtils;
 import com.lisa.carpartner.host.utils.voice.wake.WakeUtils;
 
 import java.util.ArrayList;
@@ -89,7 +90,8 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback,
     public void onChatGptResponse(String response) {
         if (!isConversationStart) return;
         modifyCurrentContent(new ConversationMsg(ConversationMsg.SPEAKER_AI, response));
-        STTUtils.startOnlineSoundToText(ConversationManager.this);
+        TTSUtils.startTextToSound(response, () ->
+                STTUtils.startOnlineSoundToText(ConversationManager.this));
     }
 
     @Override
