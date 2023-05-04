@@ -4,7 +4,7 @@ import com.iflytek.cloud.SpeechError;
 import com.lisa.carpartner.host.utils.UiThreadUtils;
 import com.lisa.carpartner.host.utils.chat.ChatCallBack;
 import com.lisa.carpartner.host.utils.chat.ChatGptSession;
-import com.lisa.carpartner.host.utils.voice.stt.STTUtils;
+import com.lisa.carpartner.host.utils.voice.asr.ASRUtils;
 import com.lisa.carpartner.host.utils.voice.tts.TTSUtils;
 import com.lisa.carpartner.host.utils.voice.tts.TTSUtils2;
 import com.lisa.carpartner.host.utils.voice.wake.WakeUtils;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 public class ConversationManager implements WakeUtils.OnWakeupCallback,
-        STTUtils.OnlineSoundToTextCallback,
+        ASRUtils.OnlineSoundToTextCallback,
         ChatCallBack {
 
     public Set<ConversationCallback> conversationCallbacks = new HashSet<>();
@@ -96,7 +96,7 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback,
 
             @Override
             public void onCompelete() {
-                STTUtils.startOnlineSoundToText(ConversationManager.this);
+                ASRUtils.startOnlineSoundToText(ConversationManager.this);
             }
         });
     }
@@ -107,7 +107,7 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback,
         soundToTextResult = speechError.getErrorDescription();
         resetConversationTimount();
         modifyCurrentContent(new ConversationMsg(ConversationMsg.SPEAKER_AI, speechError.getErrorDescription()));
-        STTUtils.startOnlineSoundToText(ConversationManager.this);
+        ASRUtils.startOnlineSoundToText(ConversationManager.this);
     }
 
     public interface ConversationCallback {
@@ -157,7 +157,7 @@ public class ConversationManager implements WakeUtils.OnWakeupCallback,
         fireContentsUpdate();
         chatGptSession.startNewChat();
         appendContent(new ConversationMsg(ConversationMsg.SPEAKER_AI, "请说"));
-        STTUtils.startOnlineSoundToText(ConversationManager.this);
+        ASRUtils.startOnlineSoundToText(ConversationManager.this);
     }
 
     public void stopConversation() {

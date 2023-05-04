@@ -1,8 +1,8 @@
-package com.lisa.carpartner.host.utils.voice.stt;
+package com.lisa.carpartner.host.utils.voice.asr;
 
 import com.iflytek.cloud.SpeechConstant;
 
-public class SoundToTextConfig {
+public class ASRConfig {
     //设置语法ID和 SUBJECT 为空，以免因之前有语法调用而设置了此参数；或直接清空所有参数，具体可参考 DEMO 的示例。
     public String CLOUD_GRAMMAR = null;
     public String SUBJECT = null;

@@ -1,4 +1,4 @@
-package com.lisa.carpartner.host.utils.voice.stt;
+package com.lisa.carpartner.host.utils.voice.asr;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -15,9 +15,9 @@ import com.lisa.carpartner.host.utils.voice.XmlParser;
 import com.lisa.carpartner.host.utils.LogUtils;
 import com.lisa.carpartner.host.utils.voice.ring.MediaPlayerUtils;
 
-public class STTUtils {
-    private static final String TAG = STTUtils.class.getSimpleName();
-    private static final SoundToTextConfig SOUND_TO_TEXT_CONFIG = new SoundToTextConfig();
+public class ASRUtils {
+    private static final String TAG = ASRUtils.class.getSimpleName();
+    private static final ASRConfig SOUND_TO_TEXT_CONFIG = new ASRConfig();
     private static SpeechRecognizer mIat;
 
     public interface OnlineSoundToTextCallback {
